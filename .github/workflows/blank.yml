@@ -37,14 +37,13 @@ jobs:
           docker run --rm --privileged \
             -v "$(pwd)/rootfs:/rootfs" \
             archlinux \
-            bash -c "umount /rootfs/proc || true; umount /rootfs/sys || true" \
             bash -c "pacman -Sy --noconfirm --needed archlinux-keyring arch-install-scripts && \
             pacman -Syu --noconfirm && \
             pacstrap -c -K /rootfs base base-devel"
 
       - name: Compress rootfs
         run: |
-          tar --numeric-owner --xattrs --acls -czvf arch-rootfs-${{ env.VERSION }}.tar.gz -C rootfs .
+          tar --numeric-owner --exclude='./dev' --exclude='./proc' --exclude='./sys'  --xattrs --acls -czvf arch-rootfs-${{ env.VERSION }}.tar.gz -C rootfs .
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
