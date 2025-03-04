@@ -1,0 +1,67 @@
+name: Build and Release Arch Linux RootFS
+
+on:
+  workflow_dispatch:
+jobs:
+  build-rootfs:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged  # 需要特权模式进行挂载操作
+
+    steps:
+    - name: Prepare environment
+      run: |
+        # 更新系统并安装必要工具
+        pacman -Syu --noconfirm --needed arch-install-scripts qemu-user-static
+
+    - name: Initialize pacman keys
+      run: |
+        # 初始化pacman密钥环
+        pacman-key --init
+        pacman-key --populate archlinux
+
+    - name: Create rootfs directory
+      run: |
+        mkdir -p arch-rootfs
+
+    - name: Install base system
+      run: |
+        # 使用pacstrap安装基础系统
+        pacstrap -C /etc/pacman.conf -c arch-rootfs base base-devel
+
+    - name: Basic system configuration
+      run: |
+        # 设置locale
+        echo 'en_US.UTF-8 UTF-8' > arch-rootfs/etc/locale.gen
+        echo 'LANG=en_US.UTF-8' > arch-rootfs/etc/locale.conf
+        
+        # 设置时区
+        ln -sf /usr/share/zoneinfo/UTC arch-rootfs/etc/localtime
+        
+        # 生成镜像列表
+        reflector --country US --latest 5 --protocol https --sort rate --save arch-rootfs/etc/pacman.d/mirrorlist
+
+    - name: Clean up rootfs
+      run: |
+        # 清理包缓存
+        rm -rf arch-rootfs/var/cache/pacman/pkg/*
+        
+        # 重置机器ID
+        rm -f arch-rootfs/etc/machine-id
+
+    - name: Compress rootfs
+      run: |
+        # 创建带日期和版本号的压缩包
+        VERSION=$(date +%Y%m%d)
+        tar -czf arch-rootfs-${VERSION}.tar.gz -C arch-rootfs .
+
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.ref }}
+        name: Arch Linux RootFS ${{ github.ref_name }}
+        files: |
+          arch-rootfs-*.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
