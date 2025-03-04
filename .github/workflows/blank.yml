@@ -34,7 +34,7 @@ jobs:
 
       - name: Install base system
         run: |
-          docker run --rm \
+          docker run --rm --privileged \
             -v "$(pwd)/rootfs:/rootfs" \
             archlinux \
             bash -c "pacman -Sy --noconfirm --needed archlinux-keyring arch-install-scripts && \
