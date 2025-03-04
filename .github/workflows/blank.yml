@@ -39,8 +39,8 @@ jobs:
             archlinux \
             bash -c "pacman -Sy --noconfirm --needed archlinux-keyring arch-install-scripts && \
             pacman -Syu --noconfirm && \
-            pacstrap -c -K /rootfs base base-devel \
-            tar --numeric-owner --exclude='./dev' --exclude='./proc' --exclude='./sys'  --xattrs --acls -czvf arch-rootfs-${{ env.VERSION }}.tar.gz -C /rootfs . \
+            pacstrap -c -K /rootfs base base-devel && \
+            tar --exclude='./dev' --exclude='./proc' --exclude='./sys'  --xattrs --acls -czvf arch-rootfs-${{ env.VERSION }}.tar.gz -C /rootfs . \
             cp *.tar.gz /rootfs/"
 
       - name: Upload to Release
