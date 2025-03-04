@@ -37,7 +37,7 @@ jobs:
           docker run --rm \
             -v "$(pwd)/rootfs:/rootfs" \
             archlinux \
-            bash -c "pacman -Sy --noconfirm --needed archlinux-keyring && \
+            bash -c "pacman -Sy --noconfirm --needed archlinux-keyring arch-install-scripts && \
             pacman -Syu --noconfirm && \
             pacstrap -c -K /rootfs base base-devel"
 
