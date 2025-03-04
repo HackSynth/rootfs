@@ -33,6 +33,7 @@ jobs:
     - name: Clean up rootfs
       run: |
         # 清理包缓存
+        ls -la arch-rootfs/etc
         rm -rf arch-rootfs/var/cache/pacman/pkg/*
         
         # 重置机器ID
