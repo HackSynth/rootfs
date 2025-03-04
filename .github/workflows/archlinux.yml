@@ -13,7 +13,7 @@ jobs:
     - name: Prepare environment
       run: |
         # 更新系统并安装必要工具
-        pacman -Syu --noconfirm --needed arch-install-scripts
+        pacman -Syy --noconfirm --needed arch-install-scripts
 
     - name: Initialize pacman keys
       run: |
