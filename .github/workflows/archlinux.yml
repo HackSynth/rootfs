@@ -29,19 +29,7 @@ jobs:
       run: |
         # 使用pacstrap安装基础系统
         pacstrap -C /etc/pacman.conf -c arch-rootfs base base-devel
-
-    - name: Basic system configuration
-      run: |
-        # 设置locale
-        echo 'en_US.UTF-8 UTF-8' > arch-rootfs/etc/locale.gen
-        echo 'LANG=en_US.UTF-8' > arch-rootfs/etc/locale.conf
         
-        # 设置时区
-        ln -sf /usr/share/zoneinfo/UTC arch-rootfs/etc/localtime
-        
-        # 生成镜像列表
-        reflector --country US --latest 5 --protocol https --sort rate --save arch-rootfs/etc/pacman.d/mirrorlist
-
     - name: Clean up rootfs
       run: |
         # 清理包缓存
