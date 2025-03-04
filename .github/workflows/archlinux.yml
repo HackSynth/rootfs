@@ -6,7 +6,7 @@ jobs:
   build-rootfs:
     runs-on: ubuntu-latest
     container:
-      image: archlinux:latest
+      image: archlinux:base
       options: --privileged  # 需要特权模式进行挂载操作
 
     steps:
