@@ -37,6 +37,7 @@ jobs:
           docker run --rm --privileged \
             -v "$(pwd)/rootfs:/rootfs" \
             archlinux \
+            bash -c "umount /rootfs/proc || true; umount /rootfs/sys || true" \
             bash -c "pacman -Sy --noconfirm --needed archlinux-keyring arch-install-scripts && \
             pacman -Syu --noconfirm && \
             pacstrap -c -K /rootfs base base-devel"
