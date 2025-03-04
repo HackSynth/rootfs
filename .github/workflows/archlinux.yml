@@ -44,12 +44,12 @@ jobs:
         VERSION=$(date +%Y%m%d)
         tar -czf arch-rootfs-${VERSION}.tar.gz -C arch-rootfs .
 
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: arch-rootfs-*.tar.gz
-        asset_name: arch-rootfs-${{ github.ref_name }}.tar.gz
-        asset_content_type: application/gzip
+        tag_name: ${{ github.ref_name }}  # 关键修正：使用纯标签名而不是完整引用路径
+        name: Arch Linux RootFS ${{ github.ref_name }}
+        files: |
+          arch-rootfs-*.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
