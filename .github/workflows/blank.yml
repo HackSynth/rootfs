@@ -3,6 +3,11 @@ name: Build and Release Arch Linux RootFS
 on:
   release:
     types: [created]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Custom version (e.g. v2023.07)'
+        required: true
 
 jobs:
   build-rootfs:
@@ -10,6 +15,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      # 设置动态版本号
+      - name: Set version
+        id: set-version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          else
+            echo "VERSION=$(echo ${{ github.ref }} | cut -d'/' -f3)" >> $GITHUB_ENV
+          fi
 
       - name: Set up Docker
         run: docker pull archlinux:latest
@@ -28,8 +43,7 @@ jobs:
 
       - name: Compress rootfs
         run: |
-          VERSION=$(echo ${{ github.ref }} | cut -d'/' -f3)
-          tar --numeric-owner --xattrs --acls -czvf arch-rootfs-$VERSION.tar.gz -C rootfs .
+          tar --numeric-owner --xattrs --acls -czvf arch-rootfs-${{ env.VERSION }}.tar.gz -C rootfs .
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
