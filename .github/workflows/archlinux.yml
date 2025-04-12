@@ -13,6 +13,7 @@ jobs:
     - name: Prepare environment
       run: |
         # 更新系统并安装必要工具
+        sed -i 's/^NoExtract/#NoExtract/' /etc/pacman.conf
         pacman -Syy --noconfirm --needed arch-install-scripts
 
     - name: Initialize pacman keys
